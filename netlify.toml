@@ -1,0 +1,32 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+  functions = "netlify/functions"
+
+[dev]
+  command = "npm run dev"
+  targetPort = 5173
+  port = 8888
+  framework = "vite"
+  autoLaunch = true
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[functions]
+  node_bundler = "esbuild"
+  external_node_modules = ["nodemailer", "googleapis"]
+  included_files = [".env"]
+
+[build.environment]
+  NODE_VERSION = "18"
+  NODE_ENV = "production"
+
+[[plugins]]
+  package = "@netlify/plugin-emails"
+
+[plugins.inputs]
+  provider = "google"
+  from = "recommendations@btoolme.com"
