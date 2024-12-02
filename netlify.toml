@@ -23,5 +23,3 @@
 [build.environment]
   NODE_VERSION = "18"
   NODE_ENV = "production"
-
-# Remove the plugin configuration since we're handling emails directly through the serverless functions
