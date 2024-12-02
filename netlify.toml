@@ -24,9 +24,4 @@
   NODE_VERSION = "18"
   NODE_ENV = "production"
 
-[[plugins]]
-  package = "@netlify/plugin-emails"
-
-[plugins.inputs]
-  provider = "google"
-  from = "recommendations@btoolme.com"
+# Remove the plugin configuration since we're handling emails directly through the serverless functions
