@@ -22,7 +22,6 @@ export const handler: Handler = async (event) => {
     'Content-Type': 'application/json'
   };
 
-  // Handle preflight requests
   if (event.httpMethod === 'OPTIONS') {
     return { 
       statusCode: 204, 
@@ -50,8 +49,11 @@ export const handler: Handler = async (event) => {
 
     logger.info('Processing email request', { email, name });
 
-    // Send to recommendations@btoolme.com
-    await emailService.sendRecommendations('recommendations@btoolme.com', name, recommendations);
+    // Send to both the user and our admin email
+    await Promise.all([
+      emailService.sendRecommendations(email, name, recommendations),
+      emailService.sendRecommendations('recommendations@btoolme.com', name, recommendations)
+    ]);
 
     return {
       statusCode: 200,
