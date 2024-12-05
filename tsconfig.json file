@@ -26,5 +26,3 @@
   "include": ["src", "netlify/functions"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
-
-
