@@ -1,3 +1,4 @@
+// netlify/functions/send-recommendations.ts
 import { Handler } from '@netlify/functions';
 import nodemailer from 'nodemailer';
 import { google } from 'googleapis';
@@ -16,11 +17,23 @@ export const handler: Handler = async (event) => {
   const headers = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'Content-Type',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS'
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Content-Type': 'application/json'
   };
 
   if (event.httpMethod === 'OPTIONS') {
     return { statusCode: 204, headers };
+  }
+
+  if (event.httpMethod !== 'POST') {
+    return {
+      statusCode: 405,
+      headers,
+      body: JSON.stringify({ 
+        success: false,
+        error: 'Method not allowed' 
+      })
+    };
   }
 
   try {
@@ -30,12 +43,14 @@ export const handler: Handler = async (event) => {
 
     const { email, name, recommendations } = JSON.parse(event.body);
 
+    // Get access token
     const accessToken = await oauth2Client.getAccessToken();
     
     if (!accessToken.token) {
       throw new Error('Failed to obtain access token');
     }
 
+    // Create transporter
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
@@ -48,6 +63,7 @@ export const handler: Handler = async (event) => {
       }
     });
 
+    // Send email to recommendations@btoolme.com
     await transporter.sendMail({
       from: `"btoolme Recommendations" <${process.env.EMAIL_FROM}>`,
       to: 'recommendations@btoolme.com',
