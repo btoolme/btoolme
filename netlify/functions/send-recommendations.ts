@@ -1,4 +1,3 @@
-// netlify/functions/send-recommendations.ts
 import { Handler } from '@netlify/functions';
 import nodemailer from 'nodemailer';
 import { google } from 'googleapis';
@@ -29,10 +28,7 @@ export const handler: Handler = async (event) => {
     return {
       statusCode: 405,
       headers,
-      body: JSON.stringify({ 
-        success: false,
-        error: 'Method not allowed' 
-      })
+      body: JSON.stringify({ error: 'Method not allowed' })
     };
   }
 
