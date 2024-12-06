@@ -24,6 +24,9 @@
   NODE_VERSION = "18"
   NODE_ENV = "production"
 
+[[plugins]]
+  package = "@netlify/plugin-emails"
+
 [[headers]]
   for = "/.netlify/functions/*"
     [headers.values]
@@ -31,6 +34,3 @@
     Access-Control-Allow-Headers = "Content-Type, Authorization"
     Access-Control-Allow-Methods = "GET, POST, OPTIONS"
     Content-Type = "application/json"
-
-[[plugins]]
-  package = "@netlify/plugin-emails"
