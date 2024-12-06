@@ -10,16 +10,22 @@ export default defineConfig({
     }
   },
   build: {
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom'],
-          ui: ['lucide-react']
-        }
-      }
-    },
+    outDir: 'dist',
     sourcemap: true,
-    target: 'esnext',
-    outDir: 'dist'
+    rollupOptions: {
+      input: {
+        main: resolve(__dirname, 'index.html')
+      }
+    }
+  },
+  server: {
+    port: 5173,
+    proxy: {
+      '/.netlify/functions': {
+        target: 'http://localhost:8888',
+        changeOrigin: true,
+        secure: false
+      }
+    }
   }
 });
