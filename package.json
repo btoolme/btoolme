@@ -7,13 +7,12 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview",
-    "type-check": "tsc --noEmit"
+    "preview": "vite preview"
   },
   "dependencies": {
     "@netlify/functions": "^2.6.0",
     "@netlify/plugin-emails": "^1.1.1",
-    "@vitejs/plugin-react": "^4.3.1",
+    "@vitejs/plugin-react": "^4.2.1",
     "autoprefixer": "^10.4.18",
     "date-fns": "^3.3.1",
     "googleapis": "^134.0.0",
@@ -26,7 +25,7 @@
     "sql.js": "^1.8.0",
     "tailwindcss": "^3.4.1",
     "typescript": "^5.3.3",
-    "vite": "^5.4.11",
+    "vite": "^5.1.4",
     "zod": "^3.22.4"
   },
   "devDependencies": {
