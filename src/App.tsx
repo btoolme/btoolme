@@ -1,3 +1,4 @@
+// src/App.tsx
 import React, { useState, Suspense } from 'react';
 import { Sparkles } from 'lucide-react';
 import Logo from './components/Logo';
