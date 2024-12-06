@@ -1,80 +1,94 @@
 import { Handler } from '@netlify/functions';
-import { EmailService } from '../../src/lib/email/service';
-import { CONFIG } from '../../src/config';
-import { validateQuestionnaireData } from '../../src/lib/validation';
-import { logger } from '../../src/lib/logger';
-import { AppError } from '../../src/lib/errors';
-import type { Recommendation } from '../../src/types';
+import nodemailer from 'nodemailer';
+import { google } from 'googleapis';
 
-const emailService = new EmailService(CONFIG.email);
+const oauth2Client = new google.auth.OAuth2(
+  process.env.GOOGLE_CLIENT_ID,
+  process.env.GOOGLE_CLIENT_SECRET,
+  'https://developers.google.com/oauthplayground'
+);
 
-interface RequestBody {
-  email: string;
-  name: string;
-  recommendations: Recommendation[];
-}
+oauth2Client.setCredentials({
+  refresh_token: process.env.GOOGLE_REFRESH_TOKEN
+});
 
 export const handler: Handler = async (event) => {
   const headers = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'Content-Type',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Content-Type': 'application/json'
+    'Access-Control-Allow-Methods': 'POST, OPTIONS'
   };
 
   if (event.httpMethod === 'OPTIONS') {
-    return { 
-      statusCode: 204, 
-      headers 
-    };
-  }
-
-  if (event.httpMethod !== 'POST') {
-    return {
-      statusCode: 405,
-      headers,
-      body: JSON.stringify({ 
-        success: false,
-        error: 'Method not allowed' 
-      })
-    };
+    return { statusCode: 204, headers };
   }
 
   try {
     if (!event.body) {
-      throw AppError.BadRequest('Missing request body');
+      throw new Error('Missing request body');
     }
 
-    const { email, name, recommendations } = JSON.parse(event.body) as RequestBody;
+    const { email, name, recommendations } = JSON.parse(event.body);
 
-    logger.info('Processing email request', { email, name });
+    const accessToken = await oauth2Client.getAccessToken();
+    
+    if (!accessToken.token) {
+      throw new Error('Failed to obtain access token');
+    }
 
-    // Send to both the user and our admin email
-    await Promise.all([
-      emailService.sendRecommendations(email, name, recommendations),
-      emailService.sendRecommendations('recommendations@btoolme.com', name, recommendations)
-    ]);
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        type: 'OAuth2',
+        user: process.env.EMAIL_FROM,
+        clientId: process.env.GOOGLE_CLIENT_ID,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        refreshToken: process.env.GOOGLE_REFRESH_TOKEN,
+        accessToken: accessToken.token
+      }
+    });
+
+    await transporter.sendMail({
+      from: `"btoolme Recommendations" <${process.env.EMAIL_FROM}>`,
+      to: 'recommendations@btoolme.com',
+      subject: 'New User Recommendations Request',
+      html: `
+        <h2>New User Request</h2>
+        <p><strong>Name:</strong> ${name}</p>
+        <p><strong>Email:</strong> ${email}</p>
+        
+        <h3>Recommendations:</h3>
+        ${recommendations.map((rec, index) => `
+          <div style="margin: 20px 0; padding: 20px; border: 1px solid #e5e7eb;">
+            <h4>${index + 1}. ${rec.tool.name}</h4>
+            <p>${rec.tool.description}</p>
+            <p><strong>Category:</strong> ${rec.tool.category}</p>
+            <h5>Reasons:</h5>
+            <ul>
+              ${rec.reasons.map(reason => `<li>${reason}</li>`).join('')}
+            </ul>
+          </div>
+        `).join('')}
+      `
+    });
 
     return {
       statusCode: 200,
       headers,
       body: JSON.stringify({
         success: true,
-        message: 'Email sent successfully'
+        message: 'Data sent successfully'
       })
     };
+
   } catch (error) {
-    logger.error('Email sending failed', error);
-
-    const statusCode = error instanceof AppError ? error.statusCode : 500;
-    const message = error instanceof Error ? error.message : 'Internal server error';
-
+    console.error('Function error:', error);
     return {
-      statusCode,
+      statusCode: 500,
       headers,
       body: JSON.stringify({
         success: false,
-        error: message
+        error: error instanceof Error ? error.message : 'Internal server error'
       })
     };
   }
