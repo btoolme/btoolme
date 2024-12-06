@@ -13,17 +13,17 @@
   "dependencies": {
     "@netlify/functions": "^2.6.0",
     "@netlify/plugin-emails": "^1.1.1",
+    "autoprefixer": "^10.4.18",
     "date-fns": "^3.3.1",
     "googleapis": "^134.0.0",
     "lucide-react": "^0.344.0",
     "nanoid": "^5.0.9",
     "nodemailer": "^6.9.12",
+    "postcss": "^8.4.35",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "sql.js": "^1.8.0",
-    "typescript": "^5.3.3",
-    "vite": "^5.1.4",
-    "@vitejs/plugin-react": "^4.3.1",
+    "tailwindcss": "^3.4.1",
     "zod": "^3.22.4"
   },
   "devDependencies": {
@@ -32,9 +32,13 @@
     "@types/react": "^18.3.5",
     "@types/react-dom": "^18.3.0",
     "@types/sql.js": "^1.4.9",
-    "autoprefixer": "^10.4.18",
-    "postcss": "^8.4.35",
-    "tailwindcss": "^3.4.1"
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "eslint": "^8.56.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.5",
+    "typescript": "^5.3.3",
+    "vite": "^5.4.11"
   }
 }
-
