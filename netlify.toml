@@ -1,5 +1,5 @@
 [build]
-  command = "npm run build"
+  command = "npm install && npm run build"
   publish = "dist"
   functions = "netlify/functions"
 
@@ -20,6 +20,10 @@
   external_node_modules = ["nodemailer", "googleapis"]
   included_files = [".env"]
 
+[build.environment]
+  NODE_VERSION = "18"
+  NODE_ENV = "production"
+
 [[headers]]
   for = "/.netlify/functions/*"
     [headers.values]
@@ -27,7 +31,3 @@
     Access-Control-Allow-Headers = "Content-Type, Authorization"
     Access-Control-Allow-Methods = "GET, POST, OPTIONS"
     Content-Type = "application/json"
-
-[build.environment]
-  NODE_VERSION = "18"
-  NODE_ENV = "production"
