@@ -5,4 +5,10 @@ import LoadingSpinner from './components/LoadingSpinner';
 import { QuestionnaireData } from './types';
 import { getRecommendations } from './utils/recommendations';
 
-// Rest of App.tsx remains the same...
+// Lazy load components
+const Questionnaire = React.lazy(() => import('./components/Questionnaire'));
+const Recommendations = React.lazy(() => import('./components/Recommendations'));
+
+// ... rest of your component code ...
+
+export default App;  // Make sure this line exists at the end
