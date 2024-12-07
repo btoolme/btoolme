@@ -10,13 +10,8 @@ export default defineConfig({
     }
   },
   build: {
-    outDir: 'dist',
     sourcemap: true,
-    rollupOptions: {
-      input: {
-        main: resolve(__dirname, 'index.html')
-      }
-    }
+    outDir: 'dist'
   },
   server: {
     port: 5173,
